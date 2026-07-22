@@ -67,7 +67,14 @@ fun App() {
                         )
                     }
                 } else {
-                    TodayWeather("Berlin", "2025", 25.5, 26.4, 18.0, Modifier)
+                    TodayWeather(
+                        "Berlin",
+                        date = state.currentWeather.time,
+                        temperature = state.currentWeather.temperature,
+                        maxTemperature = state.currentWeather.temperature,
+                        minTemperature = state.currentWeather.temperature,
+                        Modifier
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
                     HourlyForecast(state.hourlyWeather)
                     Spacer(modifier = Modifier.height(8.dp))
@@ -84,8 +91,8 @@ fun TodayWeather(
     city: String,
     date: String,
     temperature: Double,
-    highTemperature: Double,
-    lowTemperature: Double,
+    maxTemperature: Double,
+    minTemperature: Double,
     modifier: Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -107,7 +114,7 @@ fun TodayWeather(
                 style = MaterialTheme.typography.displayLarge
             )
             Text(
-                "H:$highTemperature L:$lowTemperature",
+                "H:$maxTemperature L:$minTemperature",
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }

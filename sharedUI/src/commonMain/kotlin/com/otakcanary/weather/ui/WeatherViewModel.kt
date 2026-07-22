@@ -8,8 +8,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.otakcanary.weather.WeatherSDK
+import com.otakcanary.weather.domain.Current
 import com.otakcanary.weather.domain.Day
 import com.otakcanary.weather.domain.Hour
+import com.otakcanary.weather.domain.WmoPresentWeather
 import com.otakcanary.weather.network.WeatherApi
 import kotlinx.coroutines.launch
 
@@ -27,6 +29,7 @@ class WeatherViewModel(private val sdk: WeatherSDK) : ViewModel() {
 
             _state.value = _state.value.copy(hourlyWeather = sdk.getHourlyWeather())
             _state.value = _state.value.copy(dailyWeather = sdk.getDailyWeather())
+            _state.value = _state.value.copy(currentWeather = sdk.getCurrentWeather())
 
             _state.value = _state.value.copy(isLoading = false)
         }
@@ -47,5 +50,6 @@ class WeatherViewModel(private val sdk: WeatherSDK) : ViewModel() {
 data class WeatherScreenState(
     val isLoading: Boolean = false,
     val hourlyWeather: List<Hour> = emptyList(),
-    val dailyWeather: List<Day> = emptyList()
+    val dailyWeather: List<Day> = emptyList(),
+    val currentWeather: Current = Current("-1", -1.1, WmoPresentWeather.CLOUDS_FORMING) // TODO how the empty state should be handeled?
 )

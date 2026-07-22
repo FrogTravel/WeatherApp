@@ -1,8 +1,11 @@
 package com.otakcanary.weather.network
 
+import com.otakcanary.weather.domain.Current
 import com.otakcanary.weather.domain.Day
 import com.otakcanary.weather.domain.Hour
 import com.otakcanary.weather.domain.WmoPresentWeather
+import com.otakcanary.weather.entity.CurrentTemperatureData
+import com.otakcanary.weather.entity.WeatherResponseCurrent
 import com.otakcanary.weather.entity.WeatherResponseDaily
 import com.otakcanary.weather.entity.WeatherResponseHourly
 import io.ktor.client.HttpClient
@@ -48,5 +51,16 @@ class WeatherApi {
                 weatherCode = WmoPresentWeather.fromCodeOrThrow(daily.weatherCode[i])
             )
         }
+    }
+
+    suspend fun getCurrentWeather(): Current {
+        val current =
+            (httpClient.get("https://api.open-meteo.com/v1/forecast?latitude=52.5244&longitude=13.4105&current=temperature_2m,weather_code")
+                .body() as WeatherResponseCurrent).current
+        return Current(
+            current.time,
+            current.temperature,
+            WmoPresentWeather.fromCodeOrThrow(current.weatherCode)
+        )
     }
 }

@@ -16,6 +16,12 @@ data class WeatherResponseDaily(
 )
 
 @Serializable
+data class WeatherResponseCurrent(
+    @SerialName("current")
+    val current: CurrentTemperatureData
+)
+
+@Serializable
 data class HourlyTemperatureData(
     @SerialName("time")
     val time: List<String>,
@@ -35,4 +41,14 @@ data class DailyTemperatureData(
     val minTemperature: List<Double>,
     @SerialName("weather_code")
     val weatherCode: List<Int>
+)
+
+@Serializable
+data class CurrentTemperatureData(
+    @SerialName("time")
+    val time: String,
+    @SerialName("temperature_2m")
+    val temperature: Double,
+    @SerialName("weather_code")
+    val weatherCode: Int
 )
