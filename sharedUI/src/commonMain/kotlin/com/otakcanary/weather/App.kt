@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,10 +25,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.otakcanary.weather.domain.Day
+import com.otakcanary.weather.domain.Hour
+import com.otakcanary.weather.domain.WmoPresentWeather
 import com.otakcanary.weather.ui.WeatherViewModel
 import org.jetbrains.compose.resources.painterResource
 import weatherapp.sharedui.generated.resources.Res
@@ -65,9 +69,9 @@ fun App() {
                 } else {
                     TodayWeather("Berlin", "2025", 25.5, 26.4, 18.0, Modifier)
                     Spacer(modifier = Modifier.height(8.dp))
-                    HourlyForecast(state.weather)
+                    HourlyForecast(state.hourlyWeather)
                     Spacer(modifier = Modifier.height(8.dp))
-                    WeekForecast(state.weather)
+                    WeekForecast(state.dailyWeather)
                 }
             }
         }
@@ -111,14 +115,14 @@ fun TodayWeather(
 }
 
 @Composable
-fun HourlyForecast(days: List<Day>) {
+fun HourlyForecast(hours: List<Hour>) {
     Text(
         "Hourly",
         style = MaterialTheme.typography.headlineLarge
     )
     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(days) { day: Day ->
-            WeatherHour(day, Modifier)
+        items(hours) { hour: Hour ->
+            WeatherHour(hour, Modifier)
         }
     }
 }
@@ -133,7 +137,9 @@ fun WeekForecast(days: List<Day>) {
     LazyColumn {
         items(days) { day: Day ->
             WeatherDay(day, Modifier)
+            Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider(Modifier)
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -142,20 +148,22 @@ fun WeekForecast(days: List<Day>) {
 fun WeatherDay(day: Day, modifier: Modifier) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text("Today")
         WeatherDescription()
-        HighAndLowTemperatures(day.temperature, day.temperature, modifier)
+        MaxMinTemperature(day.temperatureMax, day.temperatureMin, modifier)
     }
 }
 
 @Composable
-fun HighAndLowTemperatures(high: Double, low: Double, modifier: Modifier) {
+fun MaxMinTemperature(max: Double, min: Double, modifier: Modifier) {
     Row {
-        Text("${high}°")
+        Text("${max}°")
+        Spacer(modifier = modifier.width(8.dp))
         Text(
-            "${low}°",
+            "${min}°",
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
@@ -163,7 +171,10 @@ fun HighAndLowTemperatures(high: Double, low: Double, modifier: Modifier) {
 
 @Composable
 fun WeatherDescription() {
-    Row {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         Image(
             painterResource(Res.drawable.temp_sun), contentDescription = null,
             modifier = Modifier.height(32.dp)
@@ -175,7 +186,7 @@ fun WeatherDescription() {
 
 @Composable
 fun WeatherHour(
-    day: Day,
+    hour: Hour,
     modifier: Modifier
 ) {
     Column(
@@ -192,11 +203,11 @@ fun WeatherHour(
             .background(color = MaterialTheme.colorScheme.secondaryContainer)
     ) {
         Text(
-            text = day.date,
+            text = hour.time,
             color = MaterialTheme.colorScheme.onSecondaryContainer
         )
         Text(
-            text = day.temperature.toString(),
+            text = hour.temperature.toString(),
             color = MaterialTheme.colorScheme.onSecondaryContainer,
             style = MaterialTheme.typography.titleLarge
         )
@@ -206,7 +217,13 @@ fun WeatherHour(
 @Preview
 @Composable
 fun WeatherHourPreview() {
-    WeatherHour(Day("2025", 25.5), Modifier)
+    WeatherHour(
+        Hour(
+            time = "12:32",
+            temperature = 25.5,
+            weatherCode = WmoPresentWeather.BLOWING_SNOW_HIGH_HEAVY
+        ), Modifier
+    )
 }
 
 @Preview
@@ -218,7 +235,14 @@ fun TodayWeatherPreview() {
 @Preview
 @Composable
 fun WeatherDayPreview() {
-    WeatherDay(Day("2025", 25.5), Modifier)
+    WeatherDay(
+        Day(
+            date = "2025",
+            weatherCode = WmoPresentWeather.CLOUDS_FORMING,
+            temperatureMin = 12.2,
+            temperatureMax = 32.3
+        ), Modifier
+    )
 }
 
 

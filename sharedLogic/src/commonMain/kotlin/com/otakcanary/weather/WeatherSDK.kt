@@ -1,11 +1,17 @@
 package com.otakcanary.weather
 
 import com.otakcanary.weather.domain.Day
+import com.otakcanary.weather.domain.Hour
 import com.otakcanary.weather.network.WeatherApi
 
 class WeatherSDK(val api: WeatherApi) {
     @Throws(Exception::class)
-    suspend fun getNextWeekWeather(): List<Day> {
-        return api.getNextWeekWeather()
+    suspend fun getHourlyWeather(): List<Hour> {
+        return api.getHourlyWeather()
+    }
+
+    @Throws(Exception::class)
+    suspend fun getDailyWeather(): List<Day> {
+        return api.getDailyWeather()
     }
 }

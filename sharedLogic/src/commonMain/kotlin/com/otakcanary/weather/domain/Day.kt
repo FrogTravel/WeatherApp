@@ -2,5 +2,7 @@ package com.otakcanary.weather.domain
 
 data class Day(
     val date: String,
-    val temperature: Double
+    val weatherCode: WmoPresentWeather,
+    val temperatureMax: Double,
+    val temperatureMin: Double,
 )

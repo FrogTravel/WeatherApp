@@ -4,15 +4,35 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class WeatherResponse(
+data class WeatherResponseHourly(
     @SerialName("hourly")
-    val hourly: TemperatureData
+    val hourly: HourlyTemperatureData,
 )
 
 @Serializable
-data class TemperatureData(
+data class WeatherResponseDaily(
+    @SerialName("daily")
+    val daily: DailyTemperatureData
+)
+
+@Serializable
+data class HourlyTemperatureData(
     @SerialName("time")
     val time: List<String>,
     @SerialName("temperature_2m")
-    val temperature: List<Double>
+    val temperature: List<Double>,
+    @SerialName("weather_code")
+    val weatherCode: List<Int>
+)
+
+@Serializable
+data class DailyTemperatureData(
+    @SerialName("time")
+    val time: List<String>,
+    @SerialName("temperature_2m_max")
+    val maxTemperature: List<Double>,
+    @SerialName("temperature_2m_min")
+    val minTemperature: List<Double>,
+    @SerialName("weather_code")
+    val weatherCode: List<Int>
 )
